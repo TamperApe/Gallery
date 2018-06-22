@@ -54,14 +54,17 @@ new class steam {
                     document.querySelector("#register_btn").click();
 
                     await ape_executeAsync(() => {
-                        let error = document.querySelector("#error_display").innerHTML
-                        if (error == "")
+                        let error = document.querySelector("#error_display").innerHTML;
+                        let receipt_form = document.querySelector("#receipt_form h2").innerHTML;
+                        if (error == "" && receipt_form == "")
                             return false;
 
                         if (error.indexOf("已拥有此特惠中包含的产品")) {
                             item.result = error
-                            console.log("test");
                         }
+
+                        if (receipt_form != "")
+                            item.result = receipt_form
 
                         return true;
                     }, 1000 * 30);
