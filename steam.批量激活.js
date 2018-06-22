@@ -46,25 +46,38 @@ new class steam {
                 console.log("test");
                 let list = await ape_getScriptValue("steamKey", true, []);
                 for (const item of list) {
-                    if (item.result)
-                        continue;
-
+                    let msgArray = ["成功激活", "已经拥有该游戏"];
+                    if (item.result) {
+                        let found = false;
+                        for (const msgItem of msgArray) {
+                            if (item.result.indexOf(msgItem) > -1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found)
+                            continue;
+                    }
                     // document.querySelector("#product_key").value = item.key
                     document.querySelector("#accept_ssa").click();
                     document.querySelector("#register_btn").click();
 
                     await ape_executeAsync(() => {
                         let error = document.querySelector("#error_display").innerHTML;
-                        let receipt_form = document.querySelector("#receipt_form h2").innerHTML;
-                        if (error == "" && receipt_form == "")
+                        let success = document.querySelector("#receipt_form").style.display !== "none";
+
+                        if (error == "" && !success)
+                            //继续等待
                             return false;
 
-                        if (error.indexOf("已拥有此特惠中包含的产品")) {
-                            item.result = error
+                        if (error.indexOf("已拥有此特惠中包含的产品") > 0) {
+                            item.result = "已经拥有该游戏";
                         }
+                        else
+                            item.result = error
 
-                        if (receipt_form != "")
-                            item.result = receipt_form
+                        if (success)
+                            item.result = "成功激活";
 
                         return true;
                     }, 1000 * 30);
@@ -72,7 +85,6 @@ new class steam {
                     await ape_setScriptValue("steamKey", list);
                     //防止过快
                     await ape_delay(3000);
-                    // location.reload();
                     location = `https://store.steampowered.com/account/registerkey?key=${item.key}`
                     break;
                 }
