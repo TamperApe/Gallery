@@ -15,14 +15,31 @@ new class bihu {
             }];
         this.configs = [
             {
-
+                desc: '允许参数',
+                key: 'clickedList',
+                type: 'table',
+                tapKey: 0,
+                columns: [
+                    {
+                        title: '已点网址',
+                        key: 'url',
+                        type: 'link',
+                        width: 150
+                    }, {
+                        title: '点击日期',
+                        key: 'date',
+                        type: 'InputNumber',
+                        defaultValue: 50,
+                        width: 150
+                    }
+                ]
             }
         ];
     }
 
     get_Script() {
         return function () {
-            async function people(type) {
+            async function article(type) {
                 // alert(type);
             }
 
@@ -30,8 +47,8 @@ new class bihu {
 
                 console.info('bh');
                 let currentUrl = window.location.toString();
-                if (currentUrl.search('bihu.com/people') > -1) {
-                    people(type);
+                if (currentUrl.search('bihu.com/article') > -1) {
+                    article(type);
                     return;
                 }
 
@@ -41,30 +58,52 @@ new class bihu {
                 //等待数据显示
                 await ape_wait('.alt-list li .head-info', 60 * 1000);
 
-                for (const a of links) {
-                    console.info(a.href);
-                    if (currentUrl.search(a.href) > -1) {
-                        continue;
-                    }
-                    a.click();
+                while (true) {
+                    await ape_delay(2000);
+                    //轮询左侧标题栏
+                    for (const a of links) {
+                        await ape_delay(2000);
+                        console.info(a.href);
+                        if (currentUrl.search(a.href) > -1) {
+                            continue;
+                        }
+                        a.click();
 
-                    let btnLatest = document.evaluate("//a[contains(., '最新')]", document, null, XPathResult.ANY_TYPE, null).iterateNext();
-                    if (btnLatest != null)
-                        btnLatest.click();
+                        //有最新按钮点最新
+                        let btnLatest = document.evaluate("//a[contains(., '最新')]", document, null, XPathResult.ANY_TYPE, null).iterateNext();
+                        if (btnLatest != null) {
+                            btnLatest.click();
 
-                    if (!headInfoHTML)
-                        headInfoHTML = document.querySelector(".alt-list").innerHTML;
-                    else {
-                        await ape_executeAsync(() => {
-                            let temp = document.querySelector(".alt-list").innerHTML;
-                            let resut = headInfoHTML != temp;
-                            if (resut)
+                            //等待数据加载
+                            if (!headInfoHTML)
                                 headInfoHTML = document.querySelector(".alt-list").innerHTML;
-                            return resut;
-                        }, 20 * 1000);
-                    }
+                            else {
+                                await ape_executeAsync(() => {
+                                    let temp = document.querySelector(".alt-list").innerHTML;
+                                    let resut = headInfoHTML != temp;
+                                    if (resut)
+                                        headInfoHTML = document.querySelector(".alt-list").innerHTML;
+                                    return resut;
+                                }, 20 * 1000);
+                            }
+                        }
 
-                    await ape_delay(1000);
+                        //查找数据
+                        let list = document.querySelectorAll(".no-title-bottom");
+                        for (const item of list) {
+                            let monkey = Number(item.querySelectorAll("span")[0].innerText);
+                            let like = Number(item.querySelectorAll("span")[1].innerText);
+                            if (monkey > 200 && like < 50) {
+                                console.info("找到高质量贴", monkey, like, item);
+                                //打开详细页
+
+                                let clickedList = await ape_getScriptValue("clickedList", true, []);
+
+
+                                item.querySelectorAll("span")[1].click()
+                            }
+                        }
+                    }
                 }
             }
         }
