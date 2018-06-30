@@ -27,8 +27,8 @@ new class bihu {
                         width: 150
                     }, {
                         title: '点击日期',
-                        key: 'date',
-                        type: 'InputNumber',
+                        key: 'clickTime',
+                        type: 'date',
                         defaultValue: 50,
                         width: 150
                     }
@@ -40,6 +40,29 @@ new class bihu {
     get_Script() {
         return function () {
             async function article(type) {
+                await ape_wait(".row .article-details-btn", 60 * 1000);
+                document.querySelector(".row .article-details-btn").scrollIntoView();
+
+                //*[@id="root"]/div/div[1]/div/div/div/div[5]/div/div[2]/button
+                let btnLike = document.evaluate("//*[@id='root']/div/div[1]/div/div/div/div[5]/div/div[2]/button", document, null, XPathResult.ANY_TYPE, null).iterateNext();
+                console.info(btnLike.className);
+                if (btnLike.className === "active") {
+                    await ape_delay(3000 * 5);
+                    window.close()
+                }
+                else {
+                    btnLike.click();
+
+                    let clickedList = await ape_getScriptValue("clickedList", true, []);
+                    clickedList.push({
+                        url: window.location.toString(),
+                        clickTime: new Date()
+                    });
+
+                    await ape_setScriptValue("clickedList", clickedList);
+                    await ape_delay(1000 * 5);
+                    window.close();
+                }
                 // alert(type);
             }
 
@@ -93,11 +116,9 @@ new class bihu {
                         for (const item of list) {
                             let monkey = Number(item.querySelectorAll("span")[0].innerText);
                             let like = Number(item.querySelectorAll("span")[1].innerText);
-                            if (monkey > 200 && like < 50) {
+                            if (monkey > 200 && like <= 45) {
                                 console.info("找到高质量贴", monkey, like, item);
                                 //打开详细页
-
-                                let clickedList = await ape_getScriptValue("clickedList", true, []);
 
 
                                 item.querySelectorAll("span")[1].click()
