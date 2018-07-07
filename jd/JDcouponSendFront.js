@@ -44,7 +44,7 @@ new class jd {
                     let data_ruleid = item.attr("data-ruleid");
                     if (!data_key)
                         return;
-                    console.log(item);
+                    // console.log(item);
 
                     dataDict[data_key] = {
                         key: data_key,
@@ -52,10 +52,50 @@ new class jd {
                     }
                 })
 
-                // console.log(dataDict);
-                for (let key in dataDict) {
-                    let tempData = dataDict[key];
-                    await JDcouponSendFront(tempData.key, tempData.ruleId);
+                let readyExecute = false
+                let canExecute = false
+                executeHours = [10, 12, 14, 18, 20]
+                console.log("抢券运行中")
+                while (true) {
+                    let timeNow = new Date()
+                    for (const hour of executeHours) {
+                        let tempTime = new Date();
+                        tempTime.setHours(hour);
+                        tempTime.setMinutes(0);
+                        tempTime.setSeconds(0);
+
+                        let subResult = (tempTime - timeNow) / 1000   //秒
+                        if (subResult > 40 || subResult < -40)
+                            continue;
+
+                        if (subResult > 10 && subResult < 35) {
+                            //还有30秒就开始准备，加快频率
+                            readyExecute = true
+                            // console.log("ready");
+                            break;
+                        }
+                        else if (subResult < 10 && subResult > -35) {
+                            canExecute = true
+                            // console.log("go");
+                            break;
+                        }
+                        else {
+                            readyExecute = canExecute = false;
+                            // console.log("normal")
+                        }
+                    }
+                    if (executeHours.index(timeNow.getHours()) > 0)
+                        if (canExecute) {
+                            for (let key in dataDict) {
+                                let tempData = dataDict[key];
+                                await JDcouponSendFront(tempData.key, tempData.ruleId);
+                            }
+                        }
+
+                    if (readyExecute)
+                        await ape_delay(100);
+                    else
+                        await ape_delay(1000);
                 }
             }
         }
