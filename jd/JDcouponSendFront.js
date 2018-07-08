@@ -38,7 +38,7 @@ new class jd {
                     item = $(this)
                     let span = item.find("span");
                     let backgroundPos = span.css('background-position');
-                    if (!backgroundPos || backgroundPos != "0px -160px")
+                    if (!backgroundPos || backgroundPos == "0px -80px"/*今日已领*/) //(backgroundPos != "0px -160px" && backgroundPos != "0% 0%"))
                         return;
                     let data_key = item.attr("data-key");
                     let data_ruleid = item.attr("data-ruleid");
@@ -55,6 +55,10 @@ new class jd {
                 let readyExecute = false
                 let canExecute = false
                 executeHours = [10, 12, 14, 18, 20]
+                for (let key in dataDict) {
+                    let tempData = dataDict[key];
+                    await JDcouponSendFront(tempData.key, tempData.ruleId);
+                }
                 console.log("抢券运行中")
                 while (true) {
                     let timeNow = new Date()
