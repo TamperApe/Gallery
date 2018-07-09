@@ -69,32 +69,34 @@ new class jd {
                         tempTime.setSeconds(0);
 
                         let subResult = (tempTime - timeNow) / 1000   //秒
-                        if (subResult > 40 || subResult < -40)
+                        if (subResult > 40 || subResult < -40) {
+                            readyExecute = canExecute = false;
                             continue;
-
-                        if (subResult > 10 && subResult < 35) {
-                            //还有30秒就开始准备，加快频率
+                        }
+                        if (subResult >= 10 && subResult < 20) {
+                            //还有x秒就开始准备，加快频率
                             readyExecute = true
-                            // console.log("ready");
+                            //console.log("ready");
                             break;
                         }
-                        else if (subResult < 10 && subResult > -35) {
+                        else if (subResult < 10 && subResult > -10) {
                             canExecute = true
-                            // console.log("go");
+                            //console.log("go");
                             break;
                         }
                         else {
                             readyExecute = canExecute = false;
-                            // console.log("normal")
+                            //console.log("normal")
                         }
                     }
-                    if (executeHours.index(timeNow.getHours()) > 0)
-                        if (canExecute) {
-                            for (let key in dataDict) {
-                                let tempData = dataDict[key];
-                                await JDcouponSendFront(tempData.key, tempData.ruleId);
-                            }
+
+                    // if (executeHours.index(timeNow.getHours()) > -1 || executeHours.index(timeNow.getHours()) > -1)
+                    if (canExecute) {
+                        for (let key in dataDict) {
+                            let tempData = dataDict[key];
+                            JDcouponSendFront(tempData.key, tempData.ruleId);
                         }
+                    }
 
                     if (readyExecute)
                         await ape_delay(100);
