@@ -70,23 +70,23 @@ new class jd {
 
                         let subResult = (tempTime - timeNow) / 1000   //秒
                         if (subResult > 40 || subResult < -40) {
-                            readyExecute = canExecute = false;
                             continue;
                         }
+
                         if (subResult >= 10 && subResult < 20) {
                             //还有x秒就开始准备，加快频率
                             readyExecute = true
-                            //console.log("ready");
+                            // console.log("ready", readyExecute, canExecute);
                             break;
                         }
-                        else if (subResult < 10 && subResult > -10) {
+                        else if (subResult < 10 && subResult > -5) {
                             canExecute = true
-                            //console.log("go");
+                            // console.log("go", readyExecute, canExecute);
                             break;
                         }
                         else {
                             readyExecute = canExecute = false;
-                            //console.log("normal")
+                            // console.log("normal", readyExecute, canExecute)
                         }
                     }
 
@@ -98,8 +98,8 @@ new class jd {
                         }
                     }
 
-                    if (readyExecute)
-                        await ape_delay(100);
+                    if (readyExecute || canExecute)
+                        await ape_delay(20);
                     else
                         await ape_delay(1000);
                 }
