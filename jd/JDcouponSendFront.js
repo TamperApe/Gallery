@@ -1,4 +1,4 @@
-/*global
+﻿/*global
 
 $
  */
@@ -99,7 +99,7 @@ new class jd {
                     }
 
                     if (readyExecute || canExecute)
-                        await ape_delay(20);
+                        await ape_delay(100);
                     else
                         await ape_delay(1000);
                 }
