@@ -73,13 +73,13 @@ new class jd {
                             continue;
                         }
 
-                        if (subResult >= 10 && subResult < 20) {
+                        if (subResult >= 5 && subResult < 5) {
                             //还有x秒就开始准备，加快频率
                             readyExecute = true
                             // console.log("ready", readyExecute, canExecute);
                             break;
                         }
-                        else if (subResult < 10 && subResult > -5) {
+                        else if (subResult < 2 && subResult > -2) {
                             canExecute = true
                             // console.log("go", readyExecute, canExecute);
                             break;
@@ -99,7 +99,7 @@ new class jd {
                     }
 
                     if (readyExecute || canExecute)
-                        await ape_delay(100);
+                        await ape_delay(10);
                     else
                         await ape_delay(1000);
                 }
