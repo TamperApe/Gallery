@@ -82,6 +82,7 @@ new class bihu {
                 await ape_wait('.alt-list li .head-info', 60 * 1000);
 
                 while (true) {
+                    links = document.querySelectorAll('.home-list.text-center a');
                     await ape_delay(2000);
                     //轮询左侧标题栏
                     for (const a of links) {
