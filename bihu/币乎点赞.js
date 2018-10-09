@@ -83,10 +83,10 @@ new class bihu {
 
                 while (true) {
                     links = document.querySelectorAll('.home-list.text-center a');
-                    await ape_delay(2000);
+                    await ape_delay(5000);
                     //轮询左侧标题栏
                     for (const a of links) {
-                        await ape_delay(2000);
+                        await ape_delay(5000);
                         console.info(a.href);
                         if (currentUrl.search(a.href) > -1) {
                             continue;
